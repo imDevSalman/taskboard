@@ -27,7 +27,7 @@ class TaskRepositoryImpl @Inject constructor(
             .map { it.entityToDomainList() }.flowOn(Dispatchers.IO)
 
 
-    override suspend fun syncWithNetwork() {
+    override suspend fun syncWithNetwork() = withContext(Dispatchers.IO) {
         val networkTasks = fakeNetworkApi.fetchTasks()
         if (networkTasks.isNotEmpty()) {
             taskDao.insertAll(networkTasks.networkToEntityList())
@@ -38,19 +38,19 @@ class TaskRepositoryImpl @Inject constructor(
         taskDao.getById(id)?.entityToDomain()
     }
 
-    override suspend fun insertAll(tasks: List<Task>) {
+    override suspend fun insertAll(tasks: List<Task>) = withContext(Dispatchers.IO) {
         taskDao.insertAll(tasks.domainToEntityList())
     }
 
-    override suspend fun insert(task: Task) {
+    override suspend fun insert(task: Task) = withContext(Dispatchers.IO) {
         taskDao.insert(task.domainToEntity())
     }
 
-    override suspend fun update(task: Task) {
+    override suspend fun update(task: Task) = withContext(Dispatchers.IO) {
         taskDao.update(task.domainToEntity())
     }
 
-    override suspend fun delete(id: Long) {
+    override suspend fun delete(id: Long) = withContext(Dispatchers.IO) {
         taskDao.delete(id)
     }
 }
